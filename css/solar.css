@@ -1,0 +1,97 @@
+html {
+	background-color: grey;
+
+}
+
+body {
+	background-color: rgb(220 255 220);
+	margin: 0px;
+	padding: 0px;
+}
+
+.system {
+	display: flex;
+	height: 100vh;
+	overflow: auto;
+
+	& .panel {
+		xscrollbar-width: thin;
+		overflow: auto;
+		xscrollbar-width: none;
+		height: 100vh;
+
+		& :not(:hover) {
+			filter: brightness(80%);
+		}
+
+		& :hover div {
+			filter: brightness(120%);
+			height: 80vh;
+		}
+
+		& div {
+			height: 60vh;
+		}
+	}
+
+
+	& .one {
+		& div {
+			min-width: 320px;
+			background: linear-gradient(180deg, #FFB39B 0%, rgb(217, 217, 217) 100%);
+			xheight: 100vh;
+
+			& :hover {
+				height: 4000px;
+			}
+		}
+
+	}
+
+	& .two {
+		& div {
+			min-width: 320px;
+			background: linear-gradient(180deg, #9bfff6 0%, rgb(217, 217, 217) 100%);
+
+
+			& :hover {
+				height: 2000px;
+			}
+		}
+	}
+}
+
+.blade {
+	display: flex;
+	min-width: 336px;
+	margin: 0 auto;
+	height: 100vh;
+	overflow: auto;
+	scrollbar-width: none;
+	padding: 0px;
+	/* background: #55555580; */
+
+	& .vugluscr {
+	position: absolute;
+	xdisplay: none;
+	/* overflow: hidden; */
+	justify-content: center;
+	}
+}
+
+.blade:hover .vugluscr {
+	 xdisplay: block;
+}
+
+.blade .content2 {
+	width: 300px;
+	height: 4000px;
+	/* border-radius: 2px; */
+	margin: 0;
+	/* scroll-margin: 20px; */
+	scrollbar-gutter: auto;
+	background: linear-gradient(180deg, rgb(254, 255, 196) 0%, #ff9bee 100%);
+}
+
+
+.blade:hover .content2 {}

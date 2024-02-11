@@ -1,0 +1,21 @@
+/* Visit https://aka.ms/tsconfig to read more about this file */
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"lib": [
+			"DOM",
+			"DOM.Iterable",
+			"ESNext"
+		],
+		"module": "ESNext",
+		"sourceMap": true,
+		"inlineSourceMap": false,
+		"outDir": "./dist",
+		"esModuleInterop": false,
+		"forceConsistentCasingInFileNames": true,
+		"strict": false,
+		"noImplicitAny": true,
+		"noUnusedParameters": false,
+		"skipLibCheck": true
+	}
+}
