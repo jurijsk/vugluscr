@@ -63,28 +63,16 @@ body {
 
 .blade {
 	display: flex;
-	min-width: 336px;
+	width: 400px;
 	margin: 0 auto;
 	height: 100vh;
 	overflow: auto;
 	scrollbar-width: none;
 	padding: 0px;
 	/* background: #55555580; */
-
-	& .vugluscr {
-	position: absolute;
-	xdisplay: none;
-	/* overflow: hidden; */
-	justify-content: center;
-	}
-}
-
-.blade:hover .vugluscr {
-	 xdisplay: block;
 }
 
 .blade .content2 {
-	width: 300px;
 	height: 4000px;
 	/* border-radius: 2px; */
 	margin: 0;
@@ -93,5 +81,3 @@ body {
 	background: linear-gradient(180deg, rgb(254, 255, 196) 0%, #ff9bee 100%);
 }
 
-
-.blade:hover .content2 {}

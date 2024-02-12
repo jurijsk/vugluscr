@@ -9,6 +9,7 @@ let vugluscr = new Minimap(scrollable, minimapElement);
 let dothethingButton = document.getElementById("dothething");
 dothethingButton.addEventListener("click", () => {
 	console.log("dothething clicked");
+	vugluscr.crearMarkers();
 	let list = Array.from(document.getElementsByTagName("i"));
 
 	for (let i = 0; i < list.length; i++) {

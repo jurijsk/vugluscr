@@ -1,6 +1,8 @@
 export class Minimap {
 	containsElement: (element: Element) => boolean = () => false;
 	addMarker: (marker: {id?: string, element?: HTMLElement | null, topOffset?: number,  color: string}) => boolean;
+	crearMarkers: () => void;
+	removeMarkers: (id: string) => void;
 	constructor(scrollable: HTMLElement, scrollbar: HTMLElement) {
 		const cssClasses = {
 			thumb: 'vugluscr-thumb',
@@ -13,6 +15,8 @@ export class Minimap {
 		function publish(this: Minimap) {
 			this.containsElement = containsElement;
 			this.addMarker = addMarker;
+			this.crearMarkers = crearMarkers;
+			this.removeMarkers = removeMarkers;
 		}
 
 		function containsElement(element: Element) {
@@ -72,11 +76,11 @@ export class Minimap {
 
 			//commenting out the scrollbar thumb (the moving part) because it does not align well with
 			//standard thumb 
-			updateThumbPosition();
+			updateThumb();
 
 		}
 
-		function updateThumbPosition(){
+		function updateThumb(){
 			let clientHeight = scrollable.clientHeight;
 			let scrollHeight = scrollable.scrollHeight;
 			let scrollTop = scrollable.scrollTop;
@@ -107,11 +111,9 @@ export class Minimap {
 				}
 			}
 
-
 			let pos = topOffset / screen.scrollHeight;
 
 			let track = getTrack();
-			let height = track.getBoundingClientRect().height; //avoid this
 
 			let markerElement = getMarket();
 			markerElement.style.setProperty('background-color', marker.color);
@@ -121,7 +123,13 @@ export class Minimap {
 			track.append(markerElement);
 		}
 
-		function onOccurrenceDehighlighted({detail: id}: CustomEvent<string>) {
+		function crearMarkers(){
+			let track = getTrack();
+			track.innerHTML = '';
+		}
+
+
+		function removeMarkers(id: string) {
 			let track = getTrack();
 			let elements = Array.from(track.querySelectorAll(`[${markerIdAttr}=${id}]`));
 
@@ -167,7 +175,7 @@ export class Minimap {
 		}
 
 		function onScroll() {
-			window.requestAnimationFrame(updateThumbPosition);
+			window.requestAnimationFrame(updateThumb);
 		}
 
 		function onscrSizeChanged() {
@@ -179,7 +187,7 @@ export class Minimap {
 				scrollable = document.body;
 			}
 			initMinimap();
-			updateThumbPosition();
+			updateThumb();
 
 			scrollable.addEventListener('scroll', onScroll)
 			scrollbar.addEventListener("pointerdown", onPointerDown);

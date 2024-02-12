@@ -1,6 +1,8 @@
 export class Minimap {
     containsElement = () => false;
     addMarker;
+    crearMarkers;
+    removeMarkers;
     constructor(scrollable, scrollbar) {
         const cssClasses = {
             thumb: 'vugluscr-thumb',
@@ -12,6 +14,8 @@ export class Minimap {
         function publish() {
             this.containsElement = containsElement;
             this.addMarker = addMarker;
+            this.crearMarkers = crearMarkers;
+            this.removeMarkers = removeMarkers;
         }
         function containsElement(element) {
             return scrollbar.contains(element);
@@ -57,9 +61,9 @@ export class Minimap {
             scrollable.scrollTo({ top: top, behavior: 'auto' });
             //commenting out the scrollbar thumb (the moving part) because it does not align well with
             //standard thumb 
-            updateThumbPosition();
+            updateThumb();
         }
-        function updateThumbPosition() {
+        function updateThumb() {
             let clientHeight = scrollable.clientHeight;
             let scrollHeight = scrollable.scrollHeight;
             let scrollTop = scrollable.scrollTop;
@@ -85,14 +89,17 @@ export class Minimap {
             }
             let pos = topOffset / screen.scrollHeight;
             let track = getTrack();
-            let height = track.getBoundingClientRect().height; //avoid this
             let markerElement = getMarket();
             markerElement.style.setProperty('background-color', marker.color);
             markerElement.style.setProperty('top', `calc(${pos * 100}% - var(--vugluscr-marker-size))`);
             marker.id && markerElement.setAttribute(markerIdAttr, marker.id);
             track.append(markerElement);
         }
-        function onOccurrenceDehighlighted({ detail: id }) {
+        function crearMarkers() {
+            let track = getTrack();
+            track.innerHTML = '';
+        }
+        function removeMarkers(id) {
             let track = getTrack();
             let elements = Array.from(track.querySelectorAll(`[${markerIdAttr}=${id}]`));
             for (const elem of elements) {
@@ -134,7 +141,7 @@ export class Minimap {
             height: 0
         };
         function onScroll() {
-            window.requestAnimationFrame(updateThumbPosition);
+            window.requestAnimationFrame(updateThumb);
         }
         function onscrSizeChanged() {
             console.log("scr size changed");
@@ -144,7 +151,7 @@ export class Minimap {
                 scrollable = document.body;
             }
             initMinimap();
-            updateThumbPosition();
+            updateThumb();
             scrollable.addEventListener('scroll', onScroll);
             scrollbar.addEventListener("pointerdown", onPointerDown);
             document.addEventListener('fullscreenchange', onScreenChanged);

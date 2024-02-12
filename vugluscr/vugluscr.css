@@ -3,7 +3,7 @@
 	margin: 0;
 	background-color: rgba(204, 204, 204, 0.3);
 	height: 100%;
-	width: 12px;
+	min-width: 12px;
 	position: sticky;
 	top: 0px;
 	left: unset;
@@ -52,7 +52,7 @@
 			width: 60%;
 			margin: 0px auto;
 			border-radius: 12px;
-			
+
 			&:hover {
 				background-color: rgba(180, 180, 180, 0.85);
 				opacity: 1;
