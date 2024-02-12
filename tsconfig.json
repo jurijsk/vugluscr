@@ -16,6 +16,9 @@
 		"strict": false,
 		"noImplicitAny": true,
 		"noUnusedParameters": false,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"paths": {
+			"vugluscr": ["./index.ts"],
+		}
 	}
 }
