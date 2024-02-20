@@ -1,1 +1,3 @@
 node_modules
+dist/test-rig
+dist/vite.config.d.ts

@@ -1,9 +1,12 @@
+import "./vugluscr.css";
 export class Vugluscr {
 	containsElement: (element: Element) => boolean = () => false;
 	addMarker: (marker: {id?: string, element?: HTMLElement | null, topOffset?: number,  color: string}) => boolean;
 	crearMarkers: () => void;
 	removeMarkers: (id: string) => void;
-	constructor(scrollable: HTMLElement, scrollbar: HTMLElement) {
+	constructor(scrollable?: HTMLElement, scrollbar?: HTMLElement) {
+		/** Default scrollable element is usially `document.documentElement`. Should use scrollingElement maybe, see mdn */
+		let defaultScrollable = document.documentElement;
 		const cssClasses = {
 			thumb: 'vugluscr-thumb',
 			track: 'vugluscr-track',
@@ -11,7 +14,24 @@ export class Vugluscr {
 			thumbContainer: 'vugluscr-thumb-container'
 		};
 
-		console.log("minimap here")
+		const state = {
+			fullscreen: false,
+			/**
+			 *  The height of the content of the scrollable area
+			 */
+			scrollableHeight: 0,
+			/**
+			 * Height of the visible area of the scrollable element 
+			 */
+			scrollbarHeight: 0,
+			/**
+			 * Y coordinate offset between pointer location  and the padding edge of the thumb
+			 */
+			thumbOffet: 0,
+			/** indicates if the interaction was started with a pointer down on the scrollbar thumb. */
+			thumbInteraction: false
+		}
+
 		function publish(this: Vugluscr) {
 			this.containsElement = containsElement;
 			this.addMarker = addMarker;
@@ -23,14 +43,19 @@ export class Vugluscr {
 			return scrollbar.contains(element);
 		}
 
-		function initMinimap() {
+		function initScrollbar(scrollable: HTMLElement) {
 			if(!scrollbar) {
 				scrollbar = document.createElement('div');
 				scrollable.appendChild(scrollbar);
 			}
 			scrollbar.classList.add('vugluscr');
 
+			if(scrollable === defaultScrollable) {
+				scrollbar.style.setProperty('position', 'fixed');
+			}
+
 			getTrack();
+			return scrollbar;
 		}
 
 		let track: HTMLElement;
@@ -57,27 +82,6 @@ export class Vugluscr {
 				scrollbar.appendChild(thumbContainer);
 			}
 			return thumb;
-		}
-
-		function onPointerDown(event: PointerEvent) {
-			let screenHeight = screen.height;
-			let y = event.clientY;
-			let pos = y / screenHeight;
-			let totalHeight = screen.scrollHeight;
-
-			let screensNo = Math.floor(totalHeight / screenHeight) + 1;
-
-			let top = totalHeight * pos;
-			top -= screenHeight / 2;
-
-			console.log(y, totalHeight, screenHeight, screensNo, y / screenHeight, pos)
-			scrollable.scrollTo({top: top, behavior: 'auto'});
-
-
-			//commenting out the scrollbar thumb (the moving part) because it does not align well with
-			//standard thumb 
-			updateThumb();
-
 		}
 
 		function updateThumb(){
@@ -111,7 +115,7 @@ export class Vugluscr {
 				}
 			}
 
-			let pos = topOffset / screen.scrollHeight;
+			let pos = topOffset / state.scrollableHeight;
 
 			let track = getTrack();
 
@@ -145,59 +149,96 @@ export class Vugluscr {
 		}
 
 		function onScreenChanged() {
-			screen.fullscreen = document.fullscreenElement != null;
-			screen.scrollHeight = scrollable.scrollHeight;
-			screen.height = scrollable.clientHeight;
-			console.log(screen);
-			if(screen.fullscreen || screen.scrollHeight == screen.height) {
+			let scrollHeight = scrollable.scrollHeight;
+			let height = scrollable.clientHeight;
+			let fullscreen = document.fullscreenElement != null;
+
+			if(scrollHeight == state.scrollableHeight 
+				&& height == state.scrollbarHeight
+				&& fullscreen == state.fullscreen) {
+					return;
+			}
+			state.fullscreen = fullscreen;
+			state.scrollableHeight = scrollHeight;
+			state.scrollbarHeight = height;
+
+
+			if(state.fullscreen || state.scrollableHeight == state.scrollbarHeight) {
 				if(scrollbar.style.getPropertyValue('display') != 'none') {
 					scrollbar.style.setProperty('display', 'none');
+					//console.log("hide vugluscr");
 				}
-				console.log("minimap no show");
 			} else {
 				if(scrollbar.style.getPropertyValue('display')) {
 					scrollbar.style.removeProperty('display');
+					//console.log("show vugluscr");
 				}
-				console.log("minimap show show");
 			}
-		}
-
-		let screen = {
-			fullscreen: false,
-			/**
-			 *  The account of scrolling we have (`document.documentElement.scrollHeight`). Updated or resize
-			 */
-			scrollHeight: 0,
-			/**
-			 * Height of the visible document area (`document.documentElement.clientHeight`) Updated on resize 
-			 */
-			height: 0
 		}
 
 		function onScroll() {
 			window.requestAnimationFrame(updateThumb);
 		}
 
-		function onscrSizeChanged() {
-			console.log("scr size changed")
+		function onPointerMove(event: PointerEvent) {
+			const scrollbarHeight = state.scrollbarHeight;
+			const scrollbarPosition = event.clientY;
+			const percentagePosition = (scrollbarPosition - state.thumbOffet) / scrollbarHeight;
+			scrollable.scrollTo({top: percentagePosition * state.scrollableHeight, behavior: 'instant'});
+		}
+		function onThumbPointerDown(event: PointerEvent) {
+			state.thumbOffet = event.offsetY;
+			state.thumbInteraction = true;
+			document.addEventListener("pointermove", onPointerMove);
+			document.addEventListener("pointerup", onThumbPointerUp)
+		}
+
+		function onThumbPointerUp() {
+			state.thumbInteraction = false;
+			document.removeEventListener("pointermove", onPointerMove);
+			document.removeEventListener("pointerup", onThumbPointerUp)
+		}
+
+		function onTrackPointerUp(event: PointerEvent) {
+			if(state.thumbInteraction){
+				return;
+			}
+			let scrollbarHeight = state.scrollbarHeight;
+			let scrollbarPosition = event.clientY;
+			let percentagePosition = scrollbarPosition / scrollbarHeight;
+
+			let scrollToPosition = state.scrollableHeight * percentagePosition;
+			scrollToPosition -= scrollbarHeight / 2;
+
+			//console.log(scrollbarPosition, scrollableHeight, scrollbarHeight, screensNo, scrollbarPosition / scrollbarHeight, percentagePosition)
+			scrollable.scrollTo({top: scrollToPosition, behavior: 'auto'});
 		}
 
 		function init() {
 			if(scrollable == null) {
-				scrollable = document.body;
+				scrollable = defaultScrollable;
+				//looks like `document.documentElement` does not receive scroll event. 
+				//`document` does
+				document.addEventListener('scroll', onScroll);
+			}else{
+				scrollable.addEventListener('scroll', onScroll);
 			}
-			initMinimap();
+			initScrollbar(scrollable);
+			defaultScrollable = null; //just freeing space
+
 			updateThumb();
+			
+			scrollbar.addEventListener("pointerup", onTrackPointerUp);
 
-			scrollable.addEventListener('scroll', onScroll)
-			scrollbar.addEventListener("pointerdown", onPointerDown);
+			thumb.addEventListener("pointerdown", onThumbPointerDown);
 			document.addEventListener('fullscreenchange', onScreenChanged);
-			let resiseObserver = new ResizeObserver(onScreenChanged);
-			resiseObserver.observe(document.body);
 			window.addEventListener('resize', onScreenChanged);
+			onScreenChanged();
 
-			let scrSizeObserver = new ResizeObserver(onscrSizeChanged);
-			scrSizeObserver.observe(scrollbar);
+			//let resizeObserver = new ResizeObserver(onScreenChanged);
+			//resizeObserver.observe(scrollable);
+			//let scrSizeObserver = new ResizeObserver(onscrSizeChanged);
+			//scrSizeObserver.observe(scrollable);
 		}
 		init();
 

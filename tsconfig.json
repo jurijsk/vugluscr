@@ -8,15 +8,29 @@
 			"ESNext"
 		],
 		"module": "ESNext",
-		"sourceMap": true,
-		"inlineSourceMap": false,
+		"sourceMap": false,
+		"inlineSourceMap": true,
 		"outDir": "./dist",
-		"esModuleInterop": false,
+		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"strict": false,
 		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"strictNullChecks": false,
 		"noUnusedParameters": false,
 		"skipLibCheck": true,
+
+		"declaration": true,
+		"moduleResolution":"Bundler",
+
+		"useDefineForClassFields": true, //https://vitejs.dev/guide/features.html#usedefineforclassfields
+		"jsx": "preserve",
+		"resolveJsonModule": true,
+		"isolatedModules": true, //https://vitejs.dev/guide/features.html#isolatedmodules
+		
+		
+		"noEmit": true,
+		//"emitDeclarationOnly": true,
 		"paths": {
 			"vugluscr": ["./index.ts"],
 		}

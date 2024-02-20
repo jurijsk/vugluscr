@@ -1,9 +1,8 @@
 import { Vugluscr } from 'vugluscr';
-console.log("index here");
-
-let minimapElement = document.getElementById("vugluscr");
+console.log("test rig");
+//let minimapElement = document.getElementById("vugluscr");
 let scrollable = document.getElementById("blade");
-let vugluscr = new Vugluscr(scrollable, minimapElement);
+let vugluscr = new Vugluscr();
 
 
 let dothethingButton = document.getElementById("dothething");
