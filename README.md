@@ -10,6 +10,7 @@ Unlike the standard browser scrollbar with vugluscr you can:
 
 *Work in progress, see also [TODO](TODO.md)*
 
+
 # How to 
 
 
@@ -19,10 +20,10 @@ Where `scrollable` is the element containing the content that should be scrolled
 
 And `scrollbar` is the element that will be transformed to scrollbar. 
 
-*Default*: If null or undefined, the lement scrollbar will be created and appedned to `scrollable`.
+*Default*: If null or undefined, the element scrollbar will be created and appedned to `scrollable`.
 
 
-Consider passing `scrollbar` only if you need it be positioned some where outside of the `scrollable element`.
+Consider passing `scrollbar` only if you need it be positioned somewhere outside of the `scrollable element`.
 
 
 `vugluscr` assumes that `scrollable` will have `display: flex` so that `scrollbar` will attached itself to top and left using `display: sticky` if scrollable is other the `document.documentElement`;
