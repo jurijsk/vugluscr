@@ -8,12 +8,10 @@
 
 ✅ works without passing any elements, defaults to the whole page
 
-
 ⬜ make sure that scrollbar is hidden when it is not needed. Eg. https://mail.google.com/mail/u/0/#inbox
 
 ⬜ make it work with infinite scroll e.g. twitter
 
 ⬜ restore markers
-
 
 ✅ ⬜ 🆗 
